@@ -1,8 +1,8 @@
 function delete_all_marked(){
-  var query = "label:del"
-  for (batch = 0; batch * 500 < 10000; batch++) {
-    var size = batch * 500;
-    var found_threads = GmailApp.search(query, size, 500)
+  var query = "label:DEL"
+  for (batch = 0; batch < 100; batch++) {
+    var start = batch * 500;
+    var found_threads = GmailApp.search(query, start, 500)
     if (found_threads.length == 0) break;
     for (var i = 0; i < found_threads.length; i++) {
       var subject = found_threads[i].getFirstMessageSubject()
