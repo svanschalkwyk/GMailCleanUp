@@ -1,40 +1,33 @@
 function delete_all_like_this(){
-  var label_del_from_user = GmailApp.getUserLabelByName("Delete All");  
+  var label_del_from_user = GmailApp.getUserLabelByName("1-Delete All");  
   var label_mark_del = GmailApp.getUserLabelByName("DEL");  
   if(label_del_from_user == null){
-    GmailApp.createLabel('Delete All');
+    GmailApp.createLabel('1-Delete All');
   }
   if(label_mark_del == null){
     GmailApp.createLabel('DEL');
   }
   else {
-    
+    //Logger.clear();
     var senders = [];
     var threads = label_del_from_user.getThreads();  
     for (var i = 0; i < threads.length; i++) {  
-      var messages = threads[i].getMessages();  
+      var messages = threads[i].getMessages(); 
       var sender = messages[0].getFrom();
       if (senders.indexOf(sender) < 0) {
         senders.push(sender);
-        threads[i].removeLabel(label_del_from_user);
-        threads[i].addLabel(label_mark_del);
-      }
-    }
-    Logger.clear();
-    Logger.log(senders);
-    if (senders.length > 0) {
-      for (var s = 0; s < senders.length; s++) {
-        var query = "from:" + senders[s]
-        for (batch = 0; batch * 500 < 10000; batch++) {
-          var size = batch * 500;
-          var found_threads = GmailApp.search(query, size, 500)
+        var query = "from:" + senders
+        for (batch = 0; batch < 100; batch++) {
+          var start = batch * 500;
+          var found_threads = GmailApp.search(query, start, 500)
+          Logger.log(sender + ": " + found_threads.length);
           if (found_threads.length == 0) break;
           for (var i = 0; i < found_threads.length; i++) {
-            var subject = found_threads[i].getFirstMessageSubject()
             found_threads[i].addLabel(label_mark_del);
+            //found_threads[i].removeLabel(label_del_from_user);
           }
-        }
       }
+    }
     }    
   }
 }
